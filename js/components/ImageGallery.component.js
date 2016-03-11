@@ -13,7 +13,9 @@
     this.activeImage = null;
   }
 
-  ImageGalleryController.prototype.onImageSelect = function onImageSelect(image) {
-    this.activeImage = image;
-  };
+  angular.extend(ImageGalleryController.prototype, {
+    onImageSelect: function onImageSelect(image) {
+      this.activeImage = image;
+    }
+  });
 })();

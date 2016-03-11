@@ -15,8 +15,10 @@
     this.activeImage = null;
   }
 
-  ImageSelectorController.prototype.selectImage = function selectImage(image) {
-    this.activeImage = image;
-    this.onImageSelect({ $image: image });
-  };
+  angular.extend(ImageSelectorController.prototype, {
+    selectImage: function selectImage(image) {
+      this.activeImage = image;
+      this.onImageSelect({ $image: image });
+    }
+  });
 })();

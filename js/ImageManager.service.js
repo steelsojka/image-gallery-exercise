@@ -6,10 +6,12 @@
     images: []
   }
 
-  ImageManager.prototype.addImage = function addImage(url) {
-    this.images.push({
-      url: url,
-      comments: []
-    });
-  };
+  angular.extend(ImageManager.prototype, {
+    addImage: function addImage(url) {
+      this.images.push({
+        url: url,
+        comments: []
+      });
+    }
+  });
 })();
