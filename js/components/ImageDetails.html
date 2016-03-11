@@ -1,0 +1,16 @@
+<div class="image-details">
+  <div class="image-container">
+    <img ng-src="$ctrl.image.url" />
+  </div>
+  <div class="comments-container">
+    <div class="comment-list">
+      <div ng-repeat="comment in $ctrl.image.comments">
+        {{ comment }}
+      </div>
+    </div>
+    <div>
+      <textarea ng-model="$ctrl.pendingComment"></textarea>
+      <button ng-submit="$ctrl.submit()" ng-disabled="!$ctrl.pendingComment"></button>
+    </div>
+  </div>
+</div>

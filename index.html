@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html ng-app="imageGallery">
+  <head>
+    <title>Steel's Awesome Images</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="lib/angular.min.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/ImageManager.service.js"></script>
+    <script src="js/App.controller.js">
+    <script src="js/components/ImageDetails.component.js"></script>
+    <script src="js/components/ImageSelector.component.js"></script>
+  </head>
+  <body ng-controller="AppController as $ctrl">
+    <section>
+      <image-details image="$ctrl.activeImage"></image-details>
+    </section>
+    <section>
+      <image-selector on-image-select="$ctrl.onImageSelect($image)"><image-selector>
+    </section>
+  </body>
+</html>
