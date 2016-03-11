@@ -1,9 +1,7 @@
 (function() {
   angular.module('image-gallery', [
-    'image-gallery.App',
     'image-gallery.ImageManager',
-    'image-gallery.components.ImageDetails',
-    'image-gallery.components.ImageSelector'
+    'image-gallery.components.ImageGallery'
   ])
     .decorator('$http', $httpDecorator)
     .run(initialize);

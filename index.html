@@ -7,16 +7,11 @@
     <script src="lib/angular.min.js"></script>
     <script src="js/index.js"></script>
     <script src="js/ImageManager.service.js"></script>
-    <script src="js/App.controller.js">
+    <script src="js/components/ImageGallery.controller.js"></script>
     <script src="js/components/ImageDetails.component.js"></script>
     <script src="js/components/ImageSelector.component.js"></script>
   </head>
-  <body ng-controller="AppController as $ctrl">
-    <section>
-      <image-details image="$ctrl.activeImage"></image-details>
-    </section>
-    <section>
-      <image-selector on-image-select="$ctrl.onImageSelect($image)"><image-selector>
-    </section>
+  <body>
+    <image-gallery></image-gallery>
   </body>
 </html>
