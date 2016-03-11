@@ -22,6 +22,7 @@
   angular.extend(ImageDetailsController.prototype, {
     submit: function submit() {
       this.isSaving = true;
+
       // Using a fake post here... normally 'post' would be used.
       return this.$http.fakePost('/images/123/comments', { comment: this.pendingComment })
         .then(this.onCommentSuccess.bind(this));

@@ -1,8 +1,4 @@
 <div>
-  <section>
-    <image-details image="$ctrl.activeImage"></image-details>
-  </section>
-  <section>
-    <image-selector on-image-select="$ctrl.onImageSelect($image)"><image-selector>
-  </section>
+  <image-selector on-image-select="$ctrl.onImageSelect($image)"></image-selector>
+  <image-details image="$ctrl.activeImage"></image-details>
 </div>

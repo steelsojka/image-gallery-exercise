@@ -1,7 +1,8 @@
 (function() {
   angular.module('image-gallery.components.ImageGallery', [
     'image-gallery.components.ImageDetails',
-    'image-gallery.components.ImageSelector'
+    'image-gallery.components.ImageSelector',
+    'image-gallery.ImageManager'
   ])
     .controller('ImageGalleryController', ImageGalleryController)
     .component('imageGallery', {
