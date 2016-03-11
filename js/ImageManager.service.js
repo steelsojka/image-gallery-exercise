@@ -3,7 +3,7 @@
     .service('ImageManager', ImageManager);
 
   function ImageManager() {
-    images: []
+    this.images = [];
   }
 
   angular.extend(ImageManager.prototype, {
