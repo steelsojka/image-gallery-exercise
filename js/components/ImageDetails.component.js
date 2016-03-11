@@ -2,7 +2,7 @@
   angular.module('image-gallery.components.ImageDetails', [])
     .controller('ImageDetailsController', ImageDetailsController)
     .component('imageDetails', {
-      templateUrl: 'js/components/ImageGallery.html',
+      templateUrl: 'js/components/ImageDetails.html',
       controller: 'ImageDetailsController',
       bindings: {
         image: '<'

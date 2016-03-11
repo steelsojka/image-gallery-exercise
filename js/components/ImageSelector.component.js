@@ -2,7 +2,7 @@
   angular.module('image-gallery.components.ImageSelector', [])
     .controller('ImageSelectorController', ImageSelectorController)
     .component('imageSelector', {
-      templateUrl: 'js/components/ImageSelect.html',
+      templateUrl: 'js/components/ImageSelector.html',
       controller: 'ImageSelectorController',
       bindings: {
         onImageSelect: '&'
