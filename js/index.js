@@ -22,14 +22,15 @@
   // ignore this...
   $httpDecorator.$inject = ['$delegate', '$q'];
   function $httpDecorator($delegate, $q) {
-    return {
-      post: function(url, data) {
-        return $q(function(resolve, reject) {
-          setTimeout(function() {
-            resolve(data);
-          }, 1000);
-        });
-      }
+
+    $delegate.fakePost = function fakePost(url, data) {
+      return $q(function(resolve, reject) {
+        setTimeout(function() {
+          resolve(data);
+        }, 1000);
+      });
     };
+
+    return $delegate;
   }
 })();

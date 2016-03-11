@@ -17,7 +17,8 @@
   }
 
   ImageDetailsController.prototype.submit = function submit(comment) {
-    return this.$http.post('/images/123/comments', { comment: this.pendingComment })
+    // Using a fake post here... normally 'post' would be used.
+    return this.$http.fakePost('/images/123/comments', { comment: this.pendingComment })
       .then(function(res) {
         this.image.comments.push(res.comment);
         this.clearPending();
