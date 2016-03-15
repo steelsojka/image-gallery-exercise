@@ -9,8 +9,9 @@
       }
     });
 
-  ImageSelectorController.$inject = [];
-  function ImageSelectorController() {
+  ImageSelectorController.$inject = ['ImageManager'];
+  function ImageSelectorController(ImageManager) {
+    this.ImageManager = ImageManager;
     this.activeImage = null;
   }
 
