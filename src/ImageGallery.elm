@@ -1,6 +1,6 @@
 import Html exposing (..)
-import Html.Attributes exposing (src, class)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (src, class, value)
+import Html.Events exposing (onClick, onInput)
 import String exposing (trim)
 import Array exposing (..)
 
@@ -17,11 +17,13 @@ type alias Image =
 type alias Model =
   { activeImage : Maybe Int
   , images : Array Image
+  , pendingComment : String
   }
 
 
 model : Model
 model = {
+  pendingComment = "",
   activeImage = Nothing,
   images = Array.fromList [
     { url = "assets/image_1.jpg", comments = [] }
@@ -39,12 +41,30 @@ model = {
 
 type Msg
     = UpdateActiveImage (Maybe Int)
+    | AddComment
+    | PendingCommentChanged String
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
     UpdateActiveImage image ->
       { model | activeImage = image }
+    AddComment ->
+      case model.activeImage of
+        Just index -> case Array.get index model.images of
+          Just image -> if model.pendingComment /= ""
+            then { model |
+              images =
+                (Array.set index ({ image | comments =
+                  (List.append image.comments [ model.pendingComment ]) }) model.images),
+              pendingComment = ""
+            }
+            else
+              model
+          Nothing -> model
+        Nothing -> model
+    PendingCommentChanged comment ->
+      { model | pendingComment = comment }
 
 
 -- VIEW
@@ -77,18 +97,26 @@ viewThumbnail model index image =
 viewDetails : Model -> Html Msg
 viewDetails model =
   let
-    image : Maybe Image
-    image = model.activeImage
+    maybeImage : Maybe Image
+    maybeImage = model.activeImage
       |> Maybe.andThen (\index -> Array.get index model.images)
   in
     node "image-details" [] [
-      div [] [
-        case image of
-          Nothing -> h1 [] [text "Please select an image"]
-          Just image ->
-            div [class "image-container"] [
-              img [src image.url] []
+      div [] (case maybeImage of
+        Nothing -> [ h1 [] [text "Please select an image"] ]
+        Just image -> [
+          div [class "image-container"] [
+            img [src image.url] []
+          ],
+          div [class "comments-container"] [
+            h4 [] [text "Comments"],
+            div [class "comment-list"] (List.map (\comment -> (div [] [text comment])) image.comments),
+            div [] [
+              textarea [onInput PendingCommentChanged, value model.pendingComment] []
             ],
-            div [] []
-      ]
+            div [] [
+              button [onClick AddComment] [text "Comment"]
+            ]
+          ]
+        ])
     ]
