@@ -1,0 +1,22 @@
+{
+  "name": "image-gallery-elm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "sh scripts/build.sh",
+    "serve": "http-server dist",
+    "start": "npm run build && npm run serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "elm": "^0.18.0"
+  },
+  "dependencies": {
+    "http-server": "^0.11.1"
+  }
+}
