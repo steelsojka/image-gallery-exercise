@@ -1,0 +1,22 @@
+<div>
+  <h1 ng-if="!$ctrl.image">Please select an image</h1>
+  <div class="image-container" ng-if="$ctrl.image">
+    <img ng-src="{{ $ctrl.image.url }}" />
+  </div>
+  <div class="comments-container" ng-if="$ctrl.image">
+    <h4>Comments</h4>
+    <div class="comment-list">
+      <div ng-repeat="comment in $ctrl.image.comments">
+        {{ comment }}
+      </div>
+    </div>
+    <div>
+      <textarea ng-model="$ctrl.pendingComment"></textarea>
+    </div>
+    <div>
+      <button ng-click="$ctrl.submit()" ng-disabled="!$ctrl.pendingComment || $ctrl.isSaving">
+        {{ $ctrl.isSaving ? 'Saving...' : 'Comment' }}
+      </button>
+    </div>
+  </div>
+</div>
