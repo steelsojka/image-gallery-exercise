@@ -1,7 +1,4 @@
-image-gallery
-=============
+The Image Gallery
+=================
 
-Run It
-------
-
-Run a local web server: `python -m SimpleHTTPServer`
+Image gallery coding exercise using different frameworks.
