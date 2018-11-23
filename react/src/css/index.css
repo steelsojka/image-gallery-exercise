@@ -1,0 +1,60 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+image-selector {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  width: 150px;
+  border-right: 1px solid black;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+image-selector .image-thumbnail.active img,
+image-details img {
+  outline: 2px solid black;
+}
+
+image-selector .image-thumbnail {
+  padding: 5px 10px;
+}
+
+image-selector img {
+  width: 120px;
+  height: 120px;
+}
+
+image-gallery {
+  height: 100%;
+}
+
+image-details {
+  align-items: center;
+  justify-content: center;
+}
+
+image-details textarea {
+  width: 100%;
+}
+
+image-details .comment-list > div {
+  padding: 2px 0;
+}
+
+image-gallery,
+image-details,
+image-selector > div {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+image-gallery > div {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+}

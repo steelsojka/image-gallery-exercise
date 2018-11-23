@@ -1,10 +1,30 @@
-import React, { ReactNode, useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
+import { ImageGallery } from 'src/ImageGallery';
+import { appReducer, initialState, ActionType } from 'src/state';
+import { StoreContext } from 'src/StoreContext';
 
-import { ImageGallery } from './ImageGallery';
-import { appReducer, initialState } from './state';
-
-export function App() {
+export function App(): JSX.Element {
   const [ state, dispatch ] = useReducer(appReducer, initialState);
+  const store = { state, dispatch };
 
-  return <ImageGallery state={state} dispatch={dispatch} />;
+  // Save the comment.
+  useEffect(() => {
+    if (!state.isSaving) {
+      return;
+    }
+
+    const id = setTimeout(() =>
+      dispatch({
+        type: ActionType.COMMENT_SAVED,
+        payload: { index: state.activeImage, comment: state.pendingComment }
+      }), Math.random() * 2 * 1000);
+
+    return () => clearTimeout(id);
+  }, [ state.isSaving ]);
+
+  return (
+    <StoreContext.Provider value={store}>
+      <ImageGallery/>
+    </StoreContext.Provider>
+  );
 }

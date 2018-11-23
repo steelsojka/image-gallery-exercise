@@ -1,0 +1,13 @@
+{
+  "extends": "steelsojka/typescript",
+  "rules": {
+    "import-alias/import-alias": [
+      "error",
+      {
+        "aliases": [
+          { "alias": "src", "matcher": "^src" }
+        ]
+      }
+    ]
+  }
+}

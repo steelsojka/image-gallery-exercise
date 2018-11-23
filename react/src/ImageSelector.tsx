@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ActionType } from 'src/state';
+import { StoreContext } from 'src/StoreContext';
 
-import { AppState, Action, ActionType } from './state';
+export function ImageSelector(): JSX.Element {
+  const { state, dispatch } = useContext(StoreContext);
 
-export function ImageSelector(props: { state: AppState, dispatch: React.Dispatch<Action> }): JSX.Element {
   return (
     <image-selector>
-      {props.state.images.map((image, index) => (
+      {state.images.map((image, index) => (
         <div
-          className={`image-thumbnail ${props.state.activeImage === index ? 'active' : ''}`.trim()}>
-          <img src={image.url} onClick={() => props.dispatch({ type: ActionType.SELECTED_IMAGE_CHANGED, payload: index })} />
+          key={index}
+          className={`image-thumbnail ${state.activeImage === index ? 'active' : ''}`.trim()}>
+          <img src={image.url} onClick={() => dispatch({ type: ActionType.SELECTED_IMAGE_CHANGED, payload: index })} />
         </div>
       ))}
     </image-selector>
