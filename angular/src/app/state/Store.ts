@@ -33,25 +33,32 @@ export function combineReducers<S>(reducers: StateReducers<S>): (state: S, actio
 export class Actions extends Subject<Action> {}
 
 @Injectable()
+export class ActionsSource extends Subject<Action> {}
+
+@Injectable()
 export class Store<S> extends BehaviorSubject<S> {
   private reducer: (state: S, action: Action) => S = combineReducers(this.reducers);
 
   constructor(
     @Inject(REDUCERS) private reducers: StateReducers<S>,
     @Inject(Actions) private actions: Actions,
+    @Inject(ActionsSource) private actionsSource: ActionsSource,
     @Inject(INITIAL_STATE) initialState: S
   ) {
     super(initialState);
 
-    this.actions.asObservable()
+    this.actionsSource.asObservable()
       .pipe(
-        map(action => this.reducer(this.getValue(), action)),
-        filter(newState => newState !== this.getValue()))
-      .subscribe(newState => this.next(newState));
+        map(action => [ this.reducer(this.getValue(), action), action ] as [ S, Action ]),
+        filter(([ newState ]) => newState !== this.getValue()))
+      .subscribe(([ newState, action ]) => {
+        this.next(newState);
+        this.actions.next(action);
+      });
   }
 
   dispatch<T>(action: Action<T>): void {
-    this.actions.next(action);
+    this.actionsSource.next(action);
   }
 
   select<K extends keyof S, V>(key: K): Observable<S[K]> {

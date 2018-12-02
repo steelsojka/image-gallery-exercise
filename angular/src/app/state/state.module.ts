@@ -1,6 +1,6 @@
 import { NgModule, ModuleWithProviders, Inject } from '@angular/core';
 
-import { Store, REDUCERS, StateReducers, INITIAL_STATE, Actions } from './Store';
+import { Store, REDUCERS, StateReducers, INITIAL_STATE, Actions, ActionsSource } from './Store';
 
 @NgModule({})
 export class StateModule {
@@ -14,6 +14,7 @@ export class StateModule {
       providers: [
         Store,
         { provide: Actions, useFactory: () => new Actions() },
+        { provide: ActionsSource, useFactory: () => new ActionsSource() },
         { provide: REDUCERS, useValue: reducers },
         { provide: INITIAL_STATE, useValue: initialState }
       ]

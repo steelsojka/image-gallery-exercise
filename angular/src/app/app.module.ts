@@ -4,10 +4,12 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { StateModule } from './state/state.module';
 import { reducers, initialState } from './app.state';
+import { ImageSelectorComponent } from './image-selector/image-selector.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ImageSelectorComponent
   ],
   imports: [
     BrowserModule,

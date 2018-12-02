@@ -1,4 +1,5 @@
 import { StateReducers, Action } from './state/Store';
+import { ActionType, AllActions } from './app-actions.service';
 
 export interface Image {
   url: string;
@@ -12,15 +13,20 @@ export interface AppState {
 
 export const initialState: AppState = {
   activeImage: null,
-  images: []
+  images: [
+    { url: 'assets/image_1.jpg', comments: [] },
+    { url: 'assets/image_2.jpg', comments: [] },
+    { url: 'assets/image_3.jpg', comments: [] },
+    { url: 'assets/image_4.jpg', comments: [] },
+    { url: 'assets/image_5.jpg', comments: [] },
+    { url: 'assets/image_6.jpg', comments: [] },
+    { url: 'assets/image_7.jpg', comments: [] },
+    { url: 'assets/image_8.jpg', comments: [] }
+  ]
 };
 
-export enum ActionType {
-  ACTIVE_IMAGE_CHANGED = 'ACTIVE_IMAGE_CHANGED'
-}
-
 export const reducers: StateReducers<AppState> = {
-  activeImage(state: AppState['activeImage'], action: Action): AppState['activeImage'] {
+  activeImage(state: AppState['activeImage'], action: AllActions): AppState['activeImage'] {
     switch (action.type) {
       case ActionType.ACTIVE_IMAGE_CHANGED:
         return action.payload;
@@ -28,7 +34,7 @@ export const reducers: StateReducers<AppState> = {
         return state;
     }
   },
-  images(state: AppState['images'], action: Action): AppState['images'] {
+  images(state: AppState['images'], action: AllActions): AppState['images'] {
     switch (action.type) {
       default:
         return state;
