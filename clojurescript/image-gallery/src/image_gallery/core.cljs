@@ -1,5 +1,6 @@
 (ns image-gallery.core
     (:require
+      [clojure.core.async :as async]
       [reagent.core :as r :refer [atom]]
       [clojure.string :as str]
       [reagent.dom :as d]))
@@ -7,8 +8,10 @@
 ;; -------------------------
 ;; State
 (defn- make-image [url] {:url url :comments []})
-(defn- get-images [] [(make-image "http://google.com")
-                     (make-image "http://blorg.com")])
+(defn- get-images []
+  (->> (range 1 8)
+       (map #(make-image (str "/assets/image_" % ".jpg")))
+       (vec)))
 
 (defonce state (atom {:is-saving false
                       :active-image nil
@@ -21,6 +24,9 @@
 (defn- on-comment-change [text]
   (swap! state assoc :pending-comment text))
 
+(defn- on-save-success []
+  (swap! state assoc :is-saving false))
+
 (defn- on-save-comment-click []
   (swap! state
          (fn [v]
@@ -28,10 +34,18 @@
                  image (->> (:active-image v)
                             (images))
                  comment (:pending-comment v)]
-             (->> (conj (:comment image) comment)
-                  (assoc image :comments)
-                  (assoc images (:active-image v))
-                  (assoc v :images))))))
+             (->
+               (->> (conj (:comments image) comment)
+                    (assoc image :comments)
+                    (assoc images (:active-image v))
+                    (assoc v :images))
+               (assoc :pending-comment "")
+               (assoc :is-saving true)))))
+  ; Fake ajax request
+  (async/go
+    (async/<! (async/timeout 2000))
+    (on-save-success)))
+  ;; Some request here
 
 ;; -------------------------
 ;; Views
@@ -53,11 +67,12 @@
                [:div
                 [:textarea {:disable (:is-saving @state)
                             :value (:pending-comment @state)
-                            :on-change #(on-comment-change (. %1 -target -value))}]
+                            :on-change #(on-comment-change (->> %1 (.-target) (.-value)))}]
                 [:div
-                 [:button {:on-click #(on-save-comment-click)} (if (:is-saving @state)
-                                                                 "Saving..."
-                                                                 "Comment")]]]]])]]))
+                 [:button {:on-click #(on-save-comment-click)
+                           :disabled (:is-saving @state)} (if (:is-saving @state)
+                                                              "Saving..."
+                                                              "Comment")]]]]])]]))
 
 (defn image-selector []
   [:image-selector (doall
@@ -74,7 +89,9 @@
 
 (defn image-gallery-view []
   [:image-gallery.column
-   [:div [image-selector]]])
+   [:div
+    [image-selector]
+    [image-details]]])
 
 (defn image-gallery-app []
   [image-gallery-view])
