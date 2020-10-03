@@ -1,71 +1,41 @@
 (ns image-gallery.core
     (:require
-      [clojure.core.async :as async]
+      [image-gallery.state :as s]
+      [clojure.core.async :refer [go <! timeout go-loop]]
       [reagent.core :as r :refer [atom]]
       [clojure.string :as str]
       [reagent.dom :as d]))
 
 ;; -------------------------
-;; State
-(defn- make-image [url] {:url url :comments []})
-(defn- get-images []
-  (->> (range 1 8)
-       (map #(make-image (str "/assets/image_" % ".jpg")))
-       (into [])))
-
-(defonce state (atom {:is-saving false
-                      :active-image nil
-                      :images (get-images)
-                      :pending-comment ""}))
-
-(defn- on-image-click [index]
-  (swap! state assoc :active-image index))
-
-(defn- on-comment-change [text]
-  (swap! state assoc :pending-comment text))
-
-(defn- on-save-success []
-  (swap! state assoc :is-saving false))
-
-(defn- on-save-comment-click []
-  (swap! state
-         (fn [v]
-           (let [{:keys [images active-image pending-comment]} v]
-             (assoc v
-                    :pending-comment ""
-                    :is-saving true
-                    :images (update-in images [active-image :comments] #(conj % pending-comment))))))
-  ; Fake ajax request
-  (async/go
-    (async/<! (async/timeout 2000))
-    (on-save-success)))
-
-;; -------------------------
 ;; Views
 
-(defn image-details []
-  (let [{:keys [is-saving pending-comment images active-image]} @state
-        image (if active-image (nth images active-image) nil)]
-    [:image-details
-     [:div (if (not image)
-             [:h1 "Please select an image"]
-             [:div
-              [:div {:class "image-container"}
-               [:img {:src (image :url)}]]
-              [:div {:class "comments-container"}
-               [:h4 "Comments"]
-               [:div {:class "comment-list"} (doall
-                                               (map #(do [:div %]) (image :comments)))]
-               [:div
-                [:textarea {:disable (str is-saving)
-                            :value pending-comment
-                            :on-change #(on-comment-change (->> %1 (.-target) (.-value)))}]
-                [:div
-                 [:button {:on-click #(on-save-comment-click)
-                           :disable (str is-saving)}
-                  (if is-saving "Saving..." "Comment")]]]]])]]))
+(defn image-details [state]
+  (let [pending-comment (atom "")]
+    (fn []
+      (let [{:keys [is-saving images active-image]} @state
+            image (if active-image (nth images active-image) nil)]
+        [:image-details
+         [:div (if (not image)
+                 [:h1 "Please select an image"]
+                 [:div
+                  [:div {:class "image-container"}
+                   [:img {:src (:url image)}]]
+                  [:div {:class "comments-container"}
+                   [:h4 "Comments"]
+                   [:div {:class "comment-list"} (doall
+                                                   (map-indexed #(do [:div {:key %1 } %2]) (:comments image)))]
+                   [:div
+                    [:textarea {:disable (str is-saving)
+                                :value @pending-comment
+                                :on-change #(reset! pending-comment (->> %1 (.-target) (.-value)))}]
+                    [:div
+                     [:button {:on-click #(do
+                                            (s/on-save-comment-click @pending-comment)
+                                            (reset! pending-comment ""))
+                               :disable (str is-saving)}
+                      (if is-saving "Saving..." "Comment")]]]]])]]))))
 
-(defn image-selector []
+(defn image-selector [state]
   (let [{:keys [active-image images]} @state]
     [:image-selector (doall
                        (map-indexed
@@ -75,23 +45,23 @@
                                                ["image-thumbnail" "active"]
                                                ["image-thumbnail"])
                                               (str/join " "))}
-                            [:img {:src (v :url)
-                                   :on-click #(on-image-click i)}]])
-                         (:images @state)))]))
+                            [:img {:src (:url v)
+                                   :on-click #(s/on-image-click i)}]])
+                         images))]))
 
-(defn image-gallery-view []
+(defn image-gallery-view [state]
   [:image-gallery.column
    [:div
-    [image-selector]
-    [image-details]]])
+    [image-selector state]
+    [image-details state]]])
 
-(defn image-gallery-app []
-  [image-gallery-view])
+(defn image-gallery-app [state]
+  [image-gallery-view state])
 
 ;; -------------------------
 ;; Initialize app
 
 (defn mount-root []
-  (d/render [image-gallery-app] (.getElementById js/document "app")))
+  (d/render [image-gallery-app s/state] (.getElementById js/document "app")))
 
 (defn init! [] (mount-root))
