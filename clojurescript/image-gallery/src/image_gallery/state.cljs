@@ -2,7 +2,8 @@
     (:require
       [clojure.core.async :refer [go <! >! timeout chan]]
       [reagent.core :as r :refer [atom]]
-      [clojure.string :as str]))
+      [clojure.string :as str]
+      [image-gallery.store :as store]))
 
 ;; -------------------------
 ;; State
@@ -17,13 +18,13 @@
                       :active-image nil
                       :images (get-images)}))
 
-(defn on-image-click [index]
+(defn image-clicked! [index]
   (swap! state assoc :active-image index))
 
-(defn on-save-success [saved-comment]
+(defn save-successful! [saved-comment]
   (swap! state assoc :is-saving false))
 
-(defn on-save-comment-click [pending-comment]
+(defn save-comment-clicked! [pending-comment]
   (swap! state
          (fn [v]
            (let [{:keys [images active-image]} v]
@@ -34,4 +35,21 @@
   ; Fake ajax request
   (go
     (<! (timeout 2000))
-    (on-save-success pending-comment)))
+    (store/dispatch! :save-successful pending-comment)))
+
+(defn init []
+  "Connects the store to our state handlers"
+  (store/subscribe-all {:image-clicked image-clicked!
+                        :save-successful save-successful!
+                        :save-comment-clicked save-comment-clicked!}))
+
+;; ------------------------
+;; Selectors
+
+(defn active-image-index [] (:active-image @state))
+(defn images [] (:images @state))
+(defn is-saving [] (:is-saving @state))
+(defn active-image []
+  (let [index @(r/track active-image-index)
+        images @(r/track images)]
+    (if index (nth images index) nil)))
